@@ -33,10 +33,11 @@ def removeTweets(num):
         """
         timeline = api.user_timeline(count = num)
 
-        if (len(timeline)) == 0:
+        if not(len(timeline)):
                 print("None found!")
         else:
                 print "Found: %d" % (len(timeline))
+
                 for t in timeline:
                         api.destroy_status(t.id)
         return
@@ -59,12 +60,23 @@ def getRandomCompliment():
 
 
 def getCurrentStatus():
+	"""
+	
+	Returns current status from Twitter
+	
+	"""
         for status in tweepy.Cursor(api.user_timeline).items():
                 id = status.id
                 currStatus = api.get_status(id).text
                 return(currStatus)
 
 def regulateLEDS(*args):
+	"""
+	
+	Initializes all LEDs
+	Accepts param of GPIO pins to activate
+
+	"""
         #initalize all of the LEDs
         for unpack in args:
                 for indvLED in unpack:
@@ -76,7 +88,11 @@ def regulateLEDS(*args):
 
 
 def initBoard():
-        #initialize preferable board settings
+	"""
+
+	Initializes Raspberry Pi with user preferences
+
+	"""
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
 
@@ -96,6 +112,12 @@ def initBoard():
 
 
 def blinkIndicator(indID, freqMult, leng):
+	"""
+	
+	Accepts GPIO pin, time between blinks, and length of time to go for
+	Returns 'done' when finished
+
+	"""
         tempTimer = 0
 
         while tempTimer < leng:
@@ -109,6 +131,12 @@ def blinkIndicator(indID, freqMult, leng):
 
 
 def sendTweet(compliment):
+	"""
+	
+	Updates Twitter status with compliment param
+	Doesn't require try/catch -> done before this step
+
+	"""
         global api
 
         print('Updating status. . . . .')
@@ -119,12 +147,17 @@ def sendTweet(compliment):
 
 
 def inputHandler(data1, data2):
+	"""
+	
+	Awaits physical button press from user
+
+	"""
         global activated
         global compList
 
         while activated:
                 print('awaiting input ... ')
-                if GPIO.input(data1) == 0:
+                if not GPIO.input(data1):
                         getRandomCompliment()
                 time.sleep(1.5)
 
